@@ -233,7 +233,8 @@ N.B: This calculator ignores the decimal part and can´t display larger numbers(
 In this second part, we will use the QTimer to simulate a traffic light.
 ## Setup
 First of all, let´s create and customize the widgets:
- trafficlight.h
+
+trafficlight.h
 ```cpp
 QRadioButton * redlight;
   QRadioButton * yellowlight;
@@ -306,3 +307,4 @@ void TrafficLight::keyPressEvent(QKeyEvent *e)
     }
 }
 ```
+![image](https://github.com/imane0101010/Calculator/blob/3c418fc61cfe416bc91d141467d5069878142ba6/traffic_light.PNG)
