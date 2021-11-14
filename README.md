@@ -35,6 +35,7 @@ For our case, we will use the Sender approach which allow a slot to get the iden
    
    ## Digits interaction:
  The idea of this new connexion, it to connect all the button to this slot. This function will use the Sender method to get the identity of which button was clicked and act accordingly.
+
  1-Hence we will add the connect the connect all the digits buttons to this slot.
 
 ```cpp
