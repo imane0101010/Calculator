@@ -219,4 +219,4 @@ Now, let's connect the close button:
 ```
 
 
-N.B: This calculator ignores the decimal part.Stay tuned for future updates!
+N.B: This calculator ignores the decimal part and can´t display larger numbers(more than 6 digits).Stay tuned for future updates!
