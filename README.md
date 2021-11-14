@@ -88,10 +88,15 @@ public slots:
 ```
 
 This slot will simply execute the following operations:
+
 Stores the operand in the QVector nums.
+
 Get the identity of the sender button.
+
 Stores the operation in the QVector ops.
+
 Store the clicked operation.
+
 Reset the display to 0
 
 ```cpp
@@ -115,7 +120,7 @@ void Calculator::changeOperation()
 ```
 ## Enter Button:
 
-Now it´s time to get the final result of these mathematical operations.But before we should create and implement the method calculate that takes as paramenters the operation QVector and numbers Qvector and returns a number.
+Now it´s time to get the final result of these mathematical operations.But before we should create and implement the method calculate that takes as parameters the operation two QVectors of type int and qstring and returns the result of the operations.
 Here is the entire implementation:
 
 ```cpp
