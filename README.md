@@ -14,8 +14,8 @@ The goal of this lab is to use SIGNALS and SLOTS to simulate a basic calculator 
 For now our application has no reactivity. The goal of the rest of the section is to obtain step/step a fully functional widget.
 In order to have a generalized computing functionality, we will represent any mathematical operation by:  operand (operation)
 where (operation) is one of the following allowed operation + - * /.
-The idea is to create two QVectors in which we will collect the numbers and the operations used and then we will try to perform the mathematical 
-operations according to the math priority rules.
+The idea is to create two QVectors in where we will collect the numbers and the operations used and then we will try to perform the mathematical 
+operations according to the operator precedence.
 So,we will add the following members to our class calculator.h.
 
 ```cpp
@@ -185,7 +185,10 @@ int Calculator::calculate(QVector <QString> &op,QVector<int> &num)
 }
 ```
 Now we are ready to create and implement the enter_button slot. Here is the full implementation of the method:
-
+```cpp
+   public slots:
+   void enter_button;
+ ```
 ```cpp
 void Calculator::enter_button()
 {
@@ -205,6 +208,11 @@ connect(enter,&QPushButton::clicked,this, &Calculator::enter_button);
 While clicking on the reset button the whole calculation process must be refreshed.To do so we should clear all the vectors,set the operand and the cal variable to zero,and display 0 in the LCDNumber.
 Here is the code:
 ```cpp
+ public slots:
+   void reset_();
+ ```
+
+```cpp
 void Calculator::reset_(){
      auto button = dynamic_cast<QPushButton*>(sender());
      if (button == reset){
@@ -221,4 +229,4 @@ Now, let's connect the close button:
 ```
 
 
-N.B: This calculator ignores the decimal part and can´t display larger numbers(more than 6 digits).Stay tuned for future updates!
+N.B: This calculator ignores the decimal part and can´t display larger numbers(more than 6 digits).Stay tuned for more updates!
