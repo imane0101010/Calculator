@@ -1,7 +1,8 @@
 #include "calculator.h"
 #include <QKeyEvent>
 #include <QApplication>
-#include <math.h>
+#include <iostream>
+
 
 Calculator::Calculator(QWidget *parent)
     : QWidget(parent)
@@ -17,9 +18,6 @@ int Calculator::fact(int n){
     }
     return n;
 }
-
-
-
 
 
 Calculator::~Calculator()
@@ -51,14 +49,12 @@ void Calculator::createWidgets()
     enter = new QPushButton("Enter",this);
     enter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     enter->resize(sizeHint().width(), sizeHint().height());
-
+    reset = new QPushButton("Reset",this);
     //operatiosn buttons
     operations.push_back(new QPushButton("+"));
     operations.push_back(new QPushButton("-"));
     operations.push_back(new QPushButton("*"));
     operations.push_back(new QPushButton("/"));
-   // operations.push_back(new QPushButton("!"));
-
     //creating the lcd
     disp = new QLCDNumber(this);
     disp->setDigitCount(6);
@@ -78,30 +74,98 @@ void Calculator::placeWidget()
 
 
     //Adding the operations
-    for(int i=0; i <= 4; i++)
+    for(int i=0; i <4 ; i++)
         buttonsLayout->addWidget(operations[ i], i, 4);
 
 
     //Adding the 0 button
     buttonsLayout->addWidget(digits[0], 3, 0);
-    buttonsLayout->addWidget(enter, 3, 1, 1,2);
-
+    buttonsLayout->addWidget(enter, 3, 2, 1,1);
+    buttonsLayout->addWidget(reset, 3, 1, 1,1);
     setLayout(layout);
 }
 
 void Calculator::makeConnexions()
 {
+
     //Connecting the digits
     for(int i=0; i <10; i++){
         connect(digits[i], &QPushButton::clicked,
                 this, &Calculator::newDigit);
     }
     for(int i=0;i<operations.size();i++){
+
         connect(operations[i],SIGNAL(clicked()),this,SLOT(changeOperation()));
 
     }
     connect(enter,&QPushButton::clicked,
-       this, &Calculator::enter_button);
+            this, &Calculator::enter_button);
+    connect(reset,SIGNAL(clicked()),this,SLOT(reset_()));
+}
+
+int Calculator::calculate(QVector <QString> &op,QVector<int> &num)
+{
+    if(op.size()==0){
+        return num[0];
+    }
+    if((!op.contains("*") && !op.contains("/")) || (!op.contains("+") && !op.contains("-"))){
+      for(int i=0;i<op.size();i++){
+         if(op[i] == "-" ){
+            if(i==0){
+             cal =cal+num[i]-num[i+1];
+            }else{
+              cal =cal -num[i+1];
+            }
+         }else if(op[i] == "+" ){
+           if(i==0){
+             cal =cal+num[i]+num[i+1];
+           }else{
+             cal =cal +num[i+1];
+           }
+         }else if(op[i] == "*" ){
+             if(i==0){
+             cal =cal+num[i]*num[i+1];
+             }else{
+                 cal =cal *num[i+1];
+             }
+         }else if(op[i] == "/" ){
+             if(num[i+1]==0){
+                 std::cout<<"syntax error";
+             }else{
+             if(i==0){
+             cal =cal+num[i]/num[i+1];
+             }else {
+                 cal =cal / num[i+1];
+             }
+         }
+         }
+}
+  }else{
+     while(op.contains("*")|| op.contains("/")){
+       for(int i =0 ; i<op.size();i++){
+
+        if(op[i]=="*"){
+
+            num[i]=num[i]*num[i+1];
+            num.removeAt(i+1);
+            op.removeAt(i);
+            i=i-1;
+
+        }else if(op[i]=="/"){
+             if(num[i+1] ==0){
+              std::cout<<"syntax error";
+             }else{
+            num[i]=num[i]/num[i+1];
+            num.removeAt(i+1);
+            op.removeAt(i);
+            i=i-1;
+             }
+        }
+     }
+  }
+ calculate(op,num);
+}
+  return cal;
 }
 
 void Calculator::keyPressEvent(QKeyEvent *e)
@@ -119,39 +183,28 @@ void Calculator::newDigit()
     auto button = dynamic_cast<QPushButton*>(sender());
     //getting the value
     int value = button->text().toInt();
-    //Check if we have an operation defined
-        if(operation)
-        {
-            //check if we have a value or not
-            if(!right)
-                right = new int{value};
-            else
-                *right = 10 * (*right) + value;
 
-            disp->display(*right);
-
-        }
-        else
-        {
-            if(!left)
-                left = new int{value};
-            else
-                *left = 10 * (*left) + value;
-                disp->display(*left);
-        }
-
+            if(!operand){
+                operand = new int{value};
+           }else{
+                *operand = 10 * (*operand) + value;
+}
+            disp->display(*operand);
     }
 
 void Calculator::changeOperation()
 {
+     nums.push_back(*operand);
     //Getting the sender button
     auto button = dynamic_cast<QPushButton*>(sender());
 
     //Storing the operation
     operation = new QString{button->text()};
 
+    ops.push_back(*operation);
+
     //Initiating the right button
-    right = new int{0};
+    operand = new int{0};
 
     //reseting the display
     disp->display(0);
@@ -159,26 +212,30 @@ void Calculator::changeOperation()
 
 void Calculator::enter_button()
 {
+ nums.push_back(*operand);
 auto button = dynamic_cast<QPushButton*>(sender());
 if(button == enter){
 
-   if(*operation == "+"){
-       disp->display(*left + *right);
-   }
-
-   else if(*operation == "-"){
-       disp->display(*left - *right);
-   }
-
-   else if(*operation == "*"){
-       disp->display(*left * *right);
-   }
-
-  else if(*operation == "/"){
-       disp->display(*left / *right);
-   }
-
+  disp->display(calculate(ops,nums));
 
 
 }
 }
+
+void Calculator::reset_(){
+     auto button = dynamic_cast<QPushButton*>(sender());
+     if (button == reset){
+        operand = new int{0};
+        cal=0;
+        disp->display(0);
+        nums.clear();
+        ops.clear();
+}
+
+}
+
+
+
+
+
+
