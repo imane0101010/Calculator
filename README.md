@@ -227,6 +227,82 @@ Now, let's connect the close button:
 ```cpp
   connect(reset,SIGNAL(clicked()),this,SLOT(reset_()));
 ```
-
-
 N.B: This calculator ignores the decimal part and can´t display larger numbers(more than 6 digits).Stay tuned for more updates!
+
+# Traffic Light
+In this second part, we will use the QTimer to simulate a traffic light.
+## Setup
+First of all, let´s create and customize the widgets:
+ trafficlight.h
+```cpp
+QRadioButton * redlight;
+  QRadioButton * yellowlight;
+  QRadioButton * greenlight;
+  QVector<QRadioButton*> lights;
+```
+trafficlight.cpp
+
+```cpp
+redlight = new QRadioButton;
+  redlight->setEnabled(false);
+  redlight->toggle();
+  redlight->setStyleSheet("QRadioButton::indicator:checked { background-color: red;}");
+
+  yellowlight = new QRadioButton;
+  yellowlight->setEnabled(false);
+  yellowlight->setStyleSheet("QRadioButton::indicator:checked { background-color: yellow;}");
+
+  greenlight = new QRadioButton;
+  greenlight->setEnabled(false);
+  greenlight->setStyleSheet("QRadioButton::indicator:checked { background-color: green;}");
+  lights.append(redlight);
+  lights.append(yellowlight);
+  lights.append(greenlight);
+```cpp
+Then let´s create the layouts and place the widgets:
+```cpp
+auto layout = new QVBoxLayout;
+  layout->addWidget(redlight);
+  layout->addWidget(yellowlight);
+  layout->addWidget(greenlight);
+  setLayout(layout);
+  ```
+  ## Interaction
+For now our application has no reactivity. The goal of this section is to obtain an automatic traffic light.To do so let's override the timer event method.
+Here is the full implementation:
+
+```cpp
+void TrafficLight::timerEvent(QTimerEvent *e){
+    lifetime++;
+    if(redlight->isChecked() &&lifetime==4){
+        yellowlight->toggle();
+        lifetime=0;
+    }else if(yellowlight->isChecked() && lifetime==1){
+        greenlight->toggle();
+        lifetime=0;
+    }else if(greenlight->isChecked() && lifetime ==3){
+        redlight->toggle();
+}        lifetime=0;
+ 
+   }
+```
+Now, we will override the keypress event method in order to be able to change the traffic light colors manually (using keyboard).
+```cpp
+void TrafficLight::keyPressEvent(QKeyEvent *e)
+{
+
+    if (e->key() == Qt::Key_Escape)
+        qApp->exit();
+
+    else if(e->key() == Qt::Key_R){
+          //index=-1;
+        redlight->toggle();
+    }else if(e->key() == Qt::Key_Y){
+        yellowlight->toggle();
+          //index=0;
+    }else if(e->key() == Qt::Key_G){
+        greenlight->toggle();
+         //index=1;
+    }
+}
+```
