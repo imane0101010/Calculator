@@ -85,18 +85,19 @@ public slots:
 ```
 
 This slot will simply execute the following operations:
-
+Stores the operand in the QVector nums.
 Get the identity of the sender button.
+Stores the operation in the QVector ops.
 Store the clicked operation.
 Reset the display to 0
 
 ```cpp
 void Calculator::changeOperation()
 {
-   
+     nums.push_back(*operand);
     //Getting the sender button
     auto button = dynamic_cast<QPushButton*>(sender());
-
+   
     //Storing the operation
     operation = new QString{button->text()};
 
@@ -109,6 +110,113 @@ void Calculator::changeOperation()
     disp->display(0);
 }
 ```
+## Enter Button:
+
+Now it´s time to get the final result of these mathematical operations.But before we should create and implement the method calculate that takes as paramenters the operation QVector and numbers Qvector and returns a number.
+Here is the entire implementation:
+
+```cpp
+int Calculator::calculate(QVector <QString> &op,QVector<int> &num)
+{
+    if(op.size()==0){
+        return num[0];
+    }
+    if((!op.contains("*") && !op.contains("/")) || (!op.contains("+") && !op.contains("-"))){
+      for(int i=0;i<op.size();i++){
+         if(op[i] == "-" ){
+            if(i==0){
+             cal =cal+num[i]-num[i+1];
+            }else{
+              cal =cal -num[i+1];
+            }
+         }else if(op[i] == "+" ){
+           if(i==0){
+             cal =cal+num[i]+num[i+1];
+           }else{
+             cal =cal +num[i+1];
+           }
+         }else if(op[i] == "*" ){
+             if(i==0){
+             cal =cal+num[i]*num[i+1];
+             }else{
+                 cal =cal *num[i+1];
+             }
+         }else if(op[i] == "/" ){
+             if(num[i+1]==0){
+                 std::cout<<"syntax error";
+                 break;
+             }else{
+             if(i==0){
+             cal =cal+num[i]/num[i+1];
+             }else {
+                 cal =cal / num[i+1];
+             }
+         }
+         }
+}
+  }else{
+     while(op.contains("*")|| op.contains("/")){
+       for(int i =0 ; i<op.size();i++){
+
+        if(op[i]=="*"){
+
+            num[i]=num[i]*num[i+1];
+            num.removeAt(i+1);
+            op.removeAt(i);
+            i=i-1;
+
+        }else if(op[i]=="/"){
+             if(num[i+1]==0){
+              std::cout<<"syntax error";
+              break;
+            }else{
+            num[i]=num[i]/num[i+1];
+            num.removeAt(i+1);
+            op.removeAt(i);
+            i=i-1;
+        }
+     }
+  }
+ calculate(op,num);
+}
+  return cal;
+}
+```
+Now we are ready to create and implement the enter_button slot. Here is the full implementation of the method:
+
+```cpp
+void Calculator::enter_button()
+{
+ nums.push_back(*operand); //storing the last operand in nums
+ auto button = dynamic_cast<QPushButton*>(sender());
+if(button == enter){
+  disp->display(calculate(ops,nums));
+}
+}
+```
+Now, let's connect the close button:
+```cpp
+connect(enter,&QPushButton::clicked,this, &Calculator::enter_button);
+```
+## Reset Button:
+
+While clicking on the reset button the whole calculation process must be refreshed.To do so we should clear all the vectors,set the operand and the cal variable to zero,and display 0 in the LCDNumber.
+Here is the code:
+```cpp
+void Calculator::reset_(){
+     auto button = dynamic_cast<QPushButton*>(sender());
+     if (button == reset){
+        operand = new int{0};
+        cal=0;
+        disp->display(0);
+        nums.clear();
+        ops.clear();
+}
+```
+Now, let's connect the close button:
+```cpp
+  connect(reset,SIGNAL(clicked()),this,SLOT(reset_()));
+```
 
 
-
+N.B: This calculator ignores the decimal part.Stay tuned for future updates!
