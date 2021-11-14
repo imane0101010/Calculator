@@ -5,6 +5,8 @@ The goal of this lab is to use SIGNALS and SLOTS to simulate a basic calculator 
 # Setup
 ## Static Calculator:
 
+![image](https://github.com/imane0101010/Calculator/blob/d46c93b877cacea3a8bec4d1f65537faeaccd687/Calc.PNG)
+
  You will find a detailed explanation in the previous lab FUN WITH LAYOUTS.
  
 ## Reactivity:
