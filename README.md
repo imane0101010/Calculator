@@ -287,6 +287,10 @@ void TrafficLight::timerEvent(QTimerEvent *e){
  
    }
 ```
+constructor:
+```cpp
+ startTimer(1000);
+ ```
 Now, we will override the keypress event method in order to be able to change the traffic light colors manually (using keyboard).
 ```cpp
 void TrafficLight::keyPressEvent(QKeyEvent *e)
