@@ -1,13 +1,17 @@
-#include "calculator.h"
-
 #include <QApplication>
+#include "trafficlight.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Calculator w;
-    w.setWindowTitle("Calculator");
-    w.resize(500,500);
-    w.show();
+
+
+    //Creating the traffic light
+    auto light = new TrafficLight;
+
+
+    //showing the trafic light
+    light->show();
+
     return a.exec();
 }
